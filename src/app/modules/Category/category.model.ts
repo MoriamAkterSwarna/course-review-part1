@@ -9,4 +9,4 @@ export const categorySchema = new Schema<TCategory>({
   },
 });
 
-export const Category = model('Category', categorySchema);
+export const Category = model<TCategory>('Category', categorySchema);
