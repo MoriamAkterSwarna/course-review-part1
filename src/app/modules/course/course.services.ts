@@ -40,9 +40,15 @@ const updateCourseIntoDB = async (
   );
   return updatedCourse;
 };
+const getCourseAndReviewsFromDB = async (courseId: string) => {
+  const course = await Course.findById(courseId).populate('reviews');
+
+  return course;
+};
 
 export const CourseService = {
   createCourseIntoDB,
   getAllCoursesFromDB,
   updateCourseIntoDB,
+  getCourseAndReviewsFromDB,
 };

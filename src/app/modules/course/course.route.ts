@@ -15,5 +15,6 @@ router.patch(
   validateZodRequest(CourseValidation.updateCourseValidationSchema),
   CourseController.updateCourse,
 );
+router.get('/courses/:courseId/reviews', CourseController.getCourseAndReviews);
 
 export const CourseRoutes = router;

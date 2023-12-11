@@ -25,64 +25,74 @@ export const DetailsSchema = new Schema<TDetails>({
     trim: true,
   },
 });
-const courseSchema = new Schema<TCourse>({
-  title: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-  },
-  instructor: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  categoryId: {
-    type: Schema.Types.ObjectId,
-    ref: 'Category',
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-    validate: {
-      validator: function (price: number) {
-        return price >= 0;
-      },
-      message: 'Price must be Greater than 0',
+const courseSchema = new Schema<TCourse>(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
     },
-  },
-  tags: [
-    {
-      type: TagsSchema,
+    instructor: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    categoryId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Category',
       required: true,
     },
-  ],
-  startDate: {
-    type: String,
-    required: true,
+    price: {
+      type: Number,
+      required: true,
+      validate: {
+        validator: function (price: number) {
+          return price >= 0;
+        },
+        message: 'Price must be Greater than 0',
+      },
+    },
+    tags: [
+      {
+        type: TagsSchema,
+        required: true,
+      },
+    ],
+    startDate: {
+      type: String,
+      required: true,
+    },
+    endDate: {
+      type: String,
+      required: true,
+    },
+    language: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    provider: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    durationWeeks: {
+      type: Number,
+    },
+    details: {
+      type: DetailsSchema,
+      required: true,
+    },
   },
-  endDate: {
-    type: String,
-    required: true,
+  {
+    toJSON: { virtuals: true },
   },
-  language: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  provider: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  durationWeeks: {
-    type: Number,
-  },
-  details: {
-    type: DetailsSchema,
-    required: true,
-  },
+);
+courseSchema.virtual('reviews', {
+  ref: 'review',
+  foreignField: 'courseId',
+  localField: '_id',
 });
 courseSchema.pre('save', function (next) {
   const totalMilliSecondsInAWeek = 7 * 60 * 60 * 24 * 1000;
