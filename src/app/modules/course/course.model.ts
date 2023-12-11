@@ -45,6 +45,12 @@ const courseSchema = new Schema<TCourse>({
   price: {
     type: Number,
     required: true,
+    validate: {
+      validator: function (price: number) {
+        return price >= 0;
+      },
+      message: 'Price must be Greater than 0',
+    },
   },
   tags: [
     {

@@ -10,6 +10,12 @@ export const ReviewSchema = new Schema<TReview>({
   rating: {
     type: Number,
     required: true,
+    validate: {
+      validator: function (rating: number) {
+        return rating >= 1 && rating <= 5;
+      },
+      message: 'Rating must be between 1 and 5',
+    },
   },
   review: {
     type: String,

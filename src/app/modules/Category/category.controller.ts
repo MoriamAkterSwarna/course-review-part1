@@ -1,22 +1,28 @@
 import { Request, Response } from 'express';
 import catchAsyncFunc from '../../utils/catchAsyncFunc';
+import sendResponseMessage from '../../utils/sendResponse';
 import { CategoryServices } from './category.services';
 
 const createCategoryController = catchAsyncFunc(
   async (req: Request, res: Response) => {
     const newCategory = await CategoryServices.createCategoryIntoDB(req.body);
-    res.status(201).json({
+
+    sendResponseMessage(res, {
+      success: true,
+      statusCode: 201,
       message: 'Category created successfully',
-      newCategory,
+      data: newCategory,
     });
   },
 );
 const getAllCategoriesController = catchAsyncFunc(
   async (req: Request, res: Response) => {
     const categories = await CategoryServices.getAllCategoriesFromDB();
-    res.status(200).json({
-      message: 'All categories fetched successfully',
-      categories,
+    sendResponseMessage(res, {
+      success: true,
+      statusCode: 200,
+      message: 'Categories retrieved successfully',
+      data: categories,
     });
   },
 );
