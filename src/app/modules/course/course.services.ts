@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
+import GenericError from '../../errors/genericError';
 import { courseSearchFields } from './course.constant';
 import { TCourse } from './course.interface';
 import { Course } from './course.model';
@@ -22,6 +24,9 @@ const updateCourseIntoDB = async (
   courseId: string,
   course: Partial<TCourse>,
 ) => {
+  const existsCourse = await Course.findById(courseId);
+  if (!existsCourse)
+    throw new GenericError(httpStatus.BAD_REQUEST, "Course doesn't exist");
   const { tags, details, ...coursesData } = course;
   const newUpdatedCourse: Record<string, unknown> = {
     ...coursesData,
@@ -48,9 +53,16 @@ const updateCourseIntoDB = async (
   return updatedCourse;
 };
 const getCourseAndReviewsFromDB = async (courseId: string) => {
-  const course = await Course.findById(courseId).populate('reviews');
-
-  return course;
+  const existsCourse = await Course.findById(courseId);
+  if (!existsCourse)
+    throw new GenericError(httpStatus.BAD_REQUEST, "Course doesn't exist");
+  try {
+    const course = await Course.findById(courseId).populate('reviews');
+    console.log(course);
+    return course;
+  } catch (error) {
+    throw new GenericError(httpStatus.BAD_REQUEST, "Course doesn't exist");
+  }
 };
 
 const getBestCoursesFromDB = async () => {
@@ -79,7 +91,7 @@ const getBestCoursesFromDB = async () => {
     ]);
     return bestCourse;
   } catch (error) {
-    console.log(error);
+    throw new GenericError(httpStatus.BAD_REQUEST, "Course doesn't exist");
   }
 };
 
