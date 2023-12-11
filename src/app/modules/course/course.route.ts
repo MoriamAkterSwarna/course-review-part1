@@ -16,5 +16,6 @@ router.patch(
   CourseController.updateCourse,
 );
 router.get('/courses/:courseId/reviews', CourseController.getCourseAndReviews);
+router.get('/course/best', CourseController.getBestCourses);
 
 export const CourseRoutes = router;

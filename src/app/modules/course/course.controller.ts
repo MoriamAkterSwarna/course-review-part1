@@ -49,9 +49,19 @@ const getCourseAndReviews = catchAsyncFunc(
     });
   },
 );
+const getBestCourses = catchAsyncFunc(async (req: Request, res: Response) => {
+  const bestCourses = await CourseService.getBestCoursesFromDB();
+  sendResponseMessage(res, {
+    success: true,
+    statusCode: 200,
+    message: 'Best Courses retrieved successfully',
+    data: bestCourses,
+  });
+});
 export const CourseController = {
   createCourse,
   getAllCourses,
   updateCourse,
   getCourseAndReviews,
+  getBestCourses,
 };
