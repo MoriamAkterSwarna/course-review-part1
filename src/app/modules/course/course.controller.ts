@@ -15,7 +15,7 @@ const createCourse = catchAsyncFunc(async (req: Request, res: Response) => {
 });
 
 const getAllCourses = catchAsyncFunc(async (req: Request, res: Response) => {
-  const courses = await CourseService.getAllCoursesFromDB();
+  const courses = await CourseService.getAllCoursesFromDB(req.query);
   sendResponseMessage(res, {
     success: true,
     statusCode: 200,
@@ -23,7 +23,22 @@ const getAllCourses = catchAsyncFunc(async (req: Request, res: Response) => {
     data: courses,
   });
 });
+
+const updateCourse = catchAsyncFunc(async (req: Request, res: Response) => {
+  const { courseId } = req.params;
+  const updatedCourse = await CourseService.updateCourseIntoDB(
+    courseId,
+    req.body,
+  );
+  sendResponseMessage(res, {
+    success: true,
+    statusCode: 200,
+    message: 'Course updated successfully',
+    data: updatedCourse,
+  });
+});
 export const CourseController = {
   createCourse,
   getAllCourses,
+  updateCourse,
 };

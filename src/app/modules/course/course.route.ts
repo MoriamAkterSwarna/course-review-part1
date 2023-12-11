@@ -5,10 +5,15 @@ import { CourseValidation } from './course.validation';
 export const router = express.Router();
 
 router.post(
-  '/',
+  '/course',
   validateZodRequest(CourseValidation.createCourseValidationSchema),
   CourseController.createCourse,
 );
-router.get('/', CourseController.getAllCourses);
+router.get('/courses', CourseController.getAllCourses);
+router.patch(
+  '/courses/:courseId',
+  validateZodRequest(CourseValidation.updateCourseValidationSchema),
+  CourseController.updateCourse,
+);
 
 export const CourseRoutes = router;

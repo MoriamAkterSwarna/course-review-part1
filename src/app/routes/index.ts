@@ -10,7 +10,7 @@ const moduleRoutes = [
     route: CategoryRoutes,
   },
   {
-    path: '/courses',
+    path: '/',
     route: CourseRoutes,
   },
   {
