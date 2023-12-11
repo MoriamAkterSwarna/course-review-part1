@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import QueryBuilder from '../../builder/QueryBuilder';
+import { courseSearchFields } from './course.constant';
 import { TCourse } from './course.interface';
 import { Course } from './course.model';
 
@@ -7,7 +9,12 @@ const createCourseIntoDB = async (course: TCourse) => {
   return newCourse;
 };
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
-  const courses = await Course.find();
+  const courseQuery = new QueryBuilder(Course.find(), query)
+    .search(courseSearchFields)
+    .filter()
+    .sort()
+    .paginate();
+  const courses = await courseQuery.newQuery;
   return courses;
 };
 
