@@ -2,7 +2,6 @@
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
 import GenericError from '../../errors/genericError';
-import { courseSearchFields } from './course.constant';
 import { TCourse } from './course.interface';
 import { Course } from './course.model';
 
@@ -12,7 +11,6 @@ const createCourseIntoDB = async (course: TCourse) => {
 };
 const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
   const courseQuery = new QueryBuilder(Course.find(), query)
-    .search(courseSearchFields)
     .filter()
     .sort()
     .paginate();

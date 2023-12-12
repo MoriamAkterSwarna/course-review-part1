@@ -95,13 +95,16 @@ courseSchema.virtual('reviews', {
   localField: '_id',
 });
 courseSchema.pre('save', function (next) {
-  const totalMilliSecondsInAWeek = 7 * 60 * 60 * 24 * 1000;
   const startDate = new Date(this.startDate);
   const endDate = new Date(this.endDate);
-  const subtractMilliSeconds = endDate.getTime() - startDate.getTime();
-  const durationWeeks = Math.ceil(
-    subtractMilliSeconds / totalMilliSecondsInAWeek,
+
+  const differenceInDays = Math.ceil(
+    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
   );
+
+  // Calculate the duration in weeks
+  const durationWeeks = Math.ceil(differenceInDays / 7);
+  console.log(durationWeeks);
   this.durationWeeks = durationWeeks;
   next();
 });

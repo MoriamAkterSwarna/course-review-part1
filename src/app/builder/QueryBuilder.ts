@@ -1,4 +1,4 @@
-import { FilterQuery, Query } from 'mongoose';
+import { Query } from 'mongoose';
 
 class QueryBuilder<T> {
   public newQuery: Query<T[], T>;
@@ -7,21 +7,6 @@ class QueryBuilder<T> {
   constructor(newQuery: Query<T[], T>, query: Record<string, unknown>) {
     this.newQuery = newQuery;
     this.query = query;
-  }
-
-  search(searchableFields: string[]) {
-    const searchTerm = this.query?.searchTerm as string;
-    if (searchTerm) {
-      this.newQuery = this.newQuery.find({
-        $or: searchableFields.map(
-          field =>
-            ({
-              [field]: { $regex: searchTerm, $options: 'i' },
-            }) as FilterQuery<T>,
-        ),
-      });
-    }
-    return this;
   }
 
   filter() {
@@ -45,6 +30,11 @@ class QueryBuilder<T> {
       filterData['price'] = {
         $lte: parseFloat(maxPrice as string),
       };
+    if (minPrice && maxPrice)
+      filterData['price'] = {
+        $gte: parseFloat(minPrice as string),
+        $lte: parseFloat(maxPrice as string),
+      };
     if (tags) filterData['tags.name'] = { $in: (tags as string).split(',') };
     if (startDate) filterData['startDate'] = { $gte: startDate as string };
     if (endDate) filterData['endDate'] = { $lte: endDate as string };
@@ -54,14 +44,7 @@ class QueryBuilder<T> {
       filterData['durationInWeeks'] = parseInt(durationInWeeks as string);
     if (level) filterData['details.level'] = level as string;
 
-    const excludeFields = [
-      'searchTerm',
-      'sort',
-      'limit',
-      'skip',
-      'page',
-      'fields',
-    ];
+    const excludeFields = ['sort', 'limit', 'skip', 'page'];
     excludeFields.forEach(elm => delete filterData[elm]);
     this.newQuery = this.newQuery.find(filterData);
     return this;
