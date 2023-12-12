@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export type TErrorResponse = {
   statusCode: number;
-  success: boolean;
+  success?: boolean;
   message: string;
-  errorMessage: string;
+  errorMessage?: string;
   errorDetails?: {
     issues?: TErrorIssue[];
     name?: string;
@@ -26,4 +26,11 @@ export type TErrorIssue = {
   path?: string;
   message: string;
   errorMessage?: string;
+};
+export type GenericError = {
+  statusCode: number;
+  success?: boolean;
+  errorMessage?: string;
+  message?: string;
+  issues?: { path: string; message: any }[];
 };

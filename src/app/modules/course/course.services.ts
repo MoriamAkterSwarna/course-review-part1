@@ -17,6 +17,17 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
   const courses = await courseQuery.newQuery;
   return courses;
 };
+const getTotalCourses = async () => {
+  try {
+    const totalCourses = await Course.countDocuments();
+    return totalCourses;
+  } catch (error) {
+    throw new GenericError(
+      httpStatus.BAD_REQUEST,
+      'Failed to get the total count of courses',
+    );
+  }
+};
 
 const updateCourseIntoDB = async (
   courseId: string,
@@ -39,10 +50,11 @@ const updateCourseIntoDB = async (
       newUpdatedCourse[`details.${key}`] = value;
     }
   }
-  console.log(newUpdatedCourse);
+  // console.log(newUpdatedCourse);
   const updatedCourse = await Course.findByIdAndUpdate(
     courseId,
     newUpdatedCourse,
+
     {
       new: true,
       runValidators: true,
@@ -96,6 +108,7 @@ const getBestCoursesFromDB = async () => {
 export const CourseService = {
   createCourseIntoDB,
   getAllCoursesFromDB,
+  getTotalCourses,
   updateCourseIntoDB,
   getCourseAndReviewsFromDB,
   getBestCoursesFromDB,

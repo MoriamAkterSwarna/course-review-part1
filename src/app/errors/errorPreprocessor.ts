@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose from 'mongoose';
 import { ZodError } from 'zod';
-import GenericError from './genericError';
 import handlerCastError from './handleCastError';
 import handlerDuplicateError from './handleDuplicateError';
 import handleValidationError from './handleValidationError';
@@ -16,8 +15,6 @@ const errorPreprocessor = (error: any) => {
     return handlerDuplicateError(error);
   } else if (error instanceof mongoose.Error.CastError) {
     return handlerCastError(error);
-  } else if (error instanceof GenericError) {
-    return error;
   } else {
     return {
       statusCode: 500,

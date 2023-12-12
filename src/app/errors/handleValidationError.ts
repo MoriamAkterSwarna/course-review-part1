@@ -1,21 +1,22 @@
+import httpStatus from 'http-status';
 import mongoose from 'mongoose';
 import { TErrorIssue, TErrorResponse } from './error.types';
 
 const handleValidationError = (
   err: mongoose.Error.ValidationError,
 ): TErrorResponse => {
-  const errorValues = Object.values(err.errors);
+  const errValues = Object.values(err.errors);
   const issues: TErrorIssue[] = [];
-  errorValues.forEach(errObj => {
+  errValues.forEach(element => {
     issues.push({
-      path: errObj.path,
-      message: errObj.message,
+      path: element.path,
+      message: element.message,
     });
   });
-  console.log(issues);
+  // console.log(issues);
 
   return {
-    statusCode: 400,
+    statusCode: httpStatus.BAD_REQUEST,
     success: false,
     message: 'Validation Error',
     errorMessage: 'Validation Error',

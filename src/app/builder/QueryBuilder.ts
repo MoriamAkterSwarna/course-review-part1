@@ -35,14 +35,33 @@ class QueryBuilder<T> {
         $gte: parseFloat(minPrice as string),
         $lte: parseFloat(maxPrice as string),
       };
-    if (tags) filterData['tags.name'] = { $in: (tags as string).split(',') };
+
+    if (tags) {
+      const tagsArray = (tags as string).split(',');
+      filterData['tags.name'] = {
+        $in: tagsArray.map(tag => new RegExp(tag, 'i')),
+      };
+    }
+
     if (startDate) filterData['startDate'] = { $gte: startDate as string };
     if (endDate) filterData['endDate'] = { $lte: endDate as string };
-    if (language) filterData['language'] = language as string;
-    if (provider) filterData['provider'] = provider as string;
+    if (startDate && endDate) {
+      filterData['startDate'] = { $gte: startDate as string };
+      filterData['endDate'] = { $lte: endDate as string };
+    }
+    if (language)
+      filterData['language'] = { $regex: new RegExp(language as string, 'i') };
+    if (provider)
+      filterData['provider'] = { $regex: new RegExp(provider as string, 'i') };
     if (durationInWeeks)
       filterData['durationInWeeks'] = parseInt(durationInWeeks as string);
-    if (level) filterData['details.level'] = level as string;
+
+    if (level) {
+      const levelArray = (level as string).split(',');
+      filterData['details.level'] = {
+        $in: levelArray.map(level => new RegExp(level, 'i')),
+      };
+    }
 
     const excludeFields = ['sort', 'limit', 'skip', 'page'];
     excludeFields.forEach(elm => delete filterData[elm]);

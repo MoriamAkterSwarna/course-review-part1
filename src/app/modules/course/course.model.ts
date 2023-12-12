@@ -77,7 +77,7 @@ const courseSchema = new Schema<TCourse>(
       required: true,
       trim: true,
     },
-    durationWeeks: {
+    durationInWeeks: {
       type: Number,
     },
     details: {
@@ -102,10 +102,9 @@ courseSchema.pre('save', function (next) {
     (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
   );
 
-  // Calculate the duration in weeks
-  const durationWeeks = Math.ceil(differenceInDays / 7);
-  console.log(durationWeeks);
-  this.durationWeeks = durationWeeks;
+  const durationInWeeks = Math.ceil(differenceInDays / 7);
+  console.log(durationInWeeks);
+  this.durationInWeeks = durationInWeeks;
   next();
 });
 
