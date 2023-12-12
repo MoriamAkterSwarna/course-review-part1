@@ -70,8 +70,19 @@ class QueryBuilder<T> {
   }
 
   sort() {
-    const sortBy = (this.query?.sortBy as string) || 'title';
+    const validFields = [
+      'title',
+      'price',
+      'startDate',
+      'endDate',
+      'language',
+      'durationInWeeks',
+    ];
+    const sortBy = this.query?.sortBy as string;
     const sortOrder = this.query?.sortOrder as string;
+    if (!validFields.includes(sortBy)) {
+      throw new Error('Invalid field for sorting');
+    }
     const sortString = `${sortOrder === 'desc' ? '-' : ''}${sortBy}`;
     this.newQuery = this.newQuery.sort(sortString);
     return this;
