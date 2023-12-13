@@ -78,7 +78,7 @@ class QueryBuilder<T> {
       'language',
       'durationInWeeks',
     ];
-    const sortBy = this.query?.sortBy as string;
+    const sortBy = (this.query?.sortBy as string) || 'title';
     const sortOrder = this.query?.sortOrder as string;
     if (!validFields.includes(sortBy)) {
       throw new Error('Invalid field for sorting');

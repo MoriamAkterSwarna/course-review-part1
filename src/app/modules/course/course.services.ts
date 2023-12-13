@@ -36,20 +36,55 @@ const updateCourseIntoDB = async (
   const existsCourse = await Course.findById(courseId);
   if (!existsCourse)
     throw new GenericError(httpStatus.BAD_REQUEST, "Course doesn't exist");
-  const { tags, details, ...coursesData } = course;
+  const { tags, details, durationInWeeks, ...coursesData } = course;
   const newUpdatedCourse: Record<string, unknown> = {
     ...coursesData,
   };
-  if (tags && Object.keys(tags).length) {
-    for (const [key, value] of Object.entries(tags)) {
-      newUpdatedCourse[`tags.${key}`] = value;
+  if (durationInWeeks) {
+    throw new GenericError(
+      httpStatus.BAD_REQUEST,
+      "Duration in weeks can't be updated",
+    );
+  }
+  if (course.startDate && course.endDate) {
+    const startDate = new Date(course.startDate);
+    const endDate = new Date(course.endDate);
+
+    const differenceInDays = Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    const durationInWeeks = Math.ceil(differenceInDays / 7);
+    newUpdatedCourse.durationInWeeks = durationInWeeks;
+  }
+  if (course.startDate || course.endDate) {
+    const startDate = new Date(course.startDate || existsCourse.startDate);
+    const endDate = new Date(course.endDate || existsCourse.endDate);
+
+    const differenceInDays = Math.ceil(
+      (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
+    );
+
+    const durationInWeeks = Math.ceil(differenceInDays / 7);
+    newUpdatedCourse.durationInWeeks = durationInWeeks;
+  }
+
+  if (tags && tags.length) {
+    for (const tag of tags) {
+      if (tag.isDeleted) {
+        newUpdatedCourse.$pull = { tags: { isDeleted: true } };
+      } else {
+        newUpdatedCourse.$addToSet = { tags: tag };
+      }
     }
   }
+
   if (details && Object.keys(details).length) {
     for (const [key, value] of Object.entries(details)) {
       newUpdatedCourse[`details.${key}`] = value;
     }
   }
+
   // console.log(newUpdatedCourse);
   const updatedCourse = await Course.findByIdAndUpdate(
     courseId,
