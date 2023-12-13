@@ -10,7 +10,7 @@ router.post(
   CourseController.createCourse,
 );
 router.get('/courses', CourseController.getAllCourses);
-router.patch(
+router.put(
   '/courses/:courseId',
   validateZodRequest(CourseValidation.updateCourseValidationSchema),
   CourseController.updateCourse,

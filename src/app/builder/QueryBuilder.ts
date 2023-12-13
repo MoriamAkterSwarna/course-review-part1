@@ -36,12 +36,7 @@ class QueryBuilder<T> {
         $lte: parseFloat(maxPrice as string),
       };
 
-    if (tags) {
-      const tagsArray = (tags as string).split(',');
-      filterData['tags.name'] = {
-        $in: tagsArray.map(tag => new RegExp(tag, 'i')),
-      };
-    }
+    if (tags) filterData['tags.name'] = { $in: tags as string[] };
 
     if (startDate) filterData['startDate'] = { $gte: startDate as string };
     if (endDate) filterData['endDate'] = { $lte: endDate as string };
@@ -49,10 +44,8 @@ class QueryBuilder<T> {
       filterData['startDate'] = { $gte: startDate as string };
       filterData['endDate'] = { $lte: endDate as string };
     }
-    if (language)
-      filterData['language'] = { $regex: new RegExp(language as string, 'i') };
-    if (provider)
-      filterData['provider'] = { $regex: new RegExp(provider as string, 'i') };
+    if (language) filterData['language'] = language as string;
+    if (provider) filterData['provider'] = provider as string;
     if (durationInWeeks)
       filterData['durationInWeeks'] = parseInt(durationInWeeks as string);
 
@@ -94,6 +87,7 @@ class QueryBuilder<T> {
     const skip = (page - 1) * limit;
 
     this.newQuery = this.newQuery.skip(skip).limit(limit);
+
     return this;
   }
 }

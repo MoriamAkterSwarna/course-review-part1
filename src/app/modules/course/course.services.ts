@@ -1,3 +1,4 @@
+/* eslint-disable no-dupe-else-if */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import httpStatus from 'http-status';
 import QueryBuilder from '../../builder/QueryBuilder';
@@ -70,11 +71,21 @@ const updateCourseIntoDB = async (
   }
 
   if (tags && tags.length) {
+    const tagsToAdd = tags.filter(tag => !tag.isDeleted);
+    if (tagsToAdd.length) {
+      newUpdatedCourse.$addToSet = { tags: { $each: tagsToAdd } };
+      const existsCourseTagsArray = existsCourse.tags.map(tag => tag.name);
+      // console.log(existsCourseTagsArray);
+      for (const tag of tagsToAdd) {
+        if (existsCourseTagsArray.includes(tag.name)) {
+          throw new GenericError(httpStatus.BAD_REQUEST, 'Tag already exists');
+        }
+      }
+    }
+
     for (const tag of tags) {
       if (tag.isDeleted) {
         newUpdatedCourse.$pull = { tags: { isDeleted: true } };
-      } else {
-        newUpdatedCourse.$addToSet = { tags: tag };
       }
     }
   }
